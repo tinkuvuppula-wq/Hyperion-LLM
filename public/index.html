@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Hyperion-LLM - Speculative Decoding & MoE Cluster Platform</title>
+  <style>
+    body { margin: 0; background: #050811; color: #38bdf8; font-family: 'Consolas', monospace; overflow: hidden; }
+    #header { padding: 14px 28px; background: #0b1120; border-bottom: 1px solid #1e293b; display: flex; justify-content: space-between; align-items: center; }
+    h1 { margin: 0; font-size: 19px; color: #38bdf8; }
+    .badge { background: #1e293b; color: #4ade80; padding: 4px 12px; border-radius: 6px; font-size: 12px; border: 1px solid #334155; }
+    #canvas { display: block; width: 100vw; height: calc(100vh - 65px); }
+  </style>
+</head>
+<body>
+  <div id="header">
+    <h1>🚀 Hyperion-LLM: Speculative Decoding & Distributed MoE Cluster Platform</h1>
+    <div>
+      <span class="badge">Speculative Gamma = 5</span>
+      <span class="badge">Paged KV-Cache Active</span>
+      <span class="badge">MoE Top-2 Routing</span>
+    </div>
+  </div>
+  <canvas id="canvas"></canvas>
+  <script>
+    const canvas = document.getElementById('canvas');
+    const ctx = canvas.getContext('2d');
+    canvas.width = window.innerWidth;
+    canvas.height = window.innerHeight - 65;
+
+    const nodes = [
+      { id: 'PromptInput', x: 120, y: canvas.height / 2, color: '#38bdf8' },
+      { id: 'DraftModel (7B)', x: 340, y: canvas.height / 2 - 120, color: '#fbbf24' },
+      { id: 'PagedKVCache', x: 340, y: canvas.height / 2 + 120, color: '#34d399' },
+      { id: 'SpeculativeDrafts', x: 560, y: canvas.height / 2 - 120, color: '#f97316' },
+      { id: 'MoERouterLayer', x: 560, y: canvas.height / 2 + 120, color: '#a855f7' },
+      { id: 'TargetVerifier (70B)', x: 800, y: canvas.height / 2, color: '#ec4899' },
+      { id: 'ValidatedTokens', x: 1040, y: canvas.height / 2, color: '#22c55e' }
+    ];
+
+    const edges = [
+      [0, 1], [0, 2], [1, 3], [2, 4], [3, 5], [4, 5], [5, 6]
+    ];
+
+    let t = 0;
+    function render() {
+      t += 0.02;
+      ctx.fillStyle = '#050811';
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+      edges.forEach(([u, v]) => {
+        const from = nodes[u];
+        const to = nodes[v];
+        ctx.strokeStyle = 'rgba(56, 189, 248, 0.25)';
+        ctx.lineWidth = 2;
+        ctx.beginPath();
+        ctx.moveTo(from.x, from.y);
+        ctx.lineTo(to.x, to.y);
+        ctx.stroke();
+
+        const ratio = (t + u * 0.3) % 1.0;
+        const px = from.x + (to.x - from.x) * ratio;
+        const py = from.y + (to.y - from.y) * ratio;
+        ctx.fillStyle = '#38bdf8';
+        ctx.beginPath();
+        ctx.arc(px, py, 4, 0, Math.PI * 2);
+        ctx.fill();
+      });
+
+      nodes.forEach(n => {
+        ctx.fillStyle = n.color;
+        ctx.shadowColor = n.color;
+        ctx.shadowBlur = 18;
+        ctx.beginPath();
+        ctx.arc(n.x, n.y, 14, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.shadowBlur = 0;
+
+        ctx.fillStyle = '#e2e8f0';
+        ctx.font = '12px monospace';
+        ctx.fillText(n.id, n.x - 40, n.y + 28);
+      });
+
+      requestAnimationFrame(render);
+    }
+    render();
+  </script>
+</body>
+</html>
