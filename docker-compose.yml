@@ -1,0 +1,8 @@
+version: "3.8"
+services:
+  hyperion-llm:
+    build: .
+    container_name: hyperion_llm_app
+    ports:
+      - "7700:7700"
+    restart: always
